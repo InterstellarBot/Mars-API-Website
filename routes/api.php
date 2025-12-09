@@ -25,9 +25,8 @@ Route::get('/images/{roverID}', function (GetRoverImagesRequest $request, string
     $validated = collect($request->validated());
 
     $data = RoverImage::where('rover_id', $roverID);
-    if($validated->has('sol')) {
+    if($validated->has('sol'))
         $data = $data::where('sol', $validated->get('sol'));
-    }
 
     return $data->paginate($validated->get("per_page", 15));
 });
