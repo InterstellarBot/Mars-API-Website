@@ -21,8 +21,9 @@ class GetRoverImagesRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            'per_page' => 'integer:between:1,200',
-            'sol' => 'integer'
+            'per_page' => 'integer|between:1,200',
+            'sol' => 'integer',
+            'camera' => 'string|max:256'
         ];
     }
 

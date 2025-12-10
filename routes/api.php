@@ -26,7 +26,11 @@ Route::get('/images/{roverID}', function (GetRoverImagesRequest $request, string
 
     $data = RoverImage::with("camera")->where('rover_id', $roverID);
     if($validated->has('sol'))
-        $data = $data::where('sol', $validated->get('sol'));
+        $data = $data->where('sol', $validated->get('sol'));
+    if($validated->has('camera')) {
+        $cameraID = $roverID . "-" . $validated->get('camera');
+        $data = $data->where('camera_id', $cameraID);
+    }
 
     return $data->paginate($validated->get("per_page", 15));
 });
