@@ -24,7 +24,7 @@ Route::get('/cameras/{cameraID}', function (Request $request, string $cameraID) 
 Route::get('/images/{roverID}', function (GetRoverImagesRequest $request, string $roverID) {
     $validated = collect($request->validated());
 
-    $data = RoverImage::where('rover_id', $roverID);
+    $data = RoverImage::with("camera")->where('rover_id', $roverID);
     if($validated->has('sol'))
         $data = $data::where('sol', $validated->get('sol'));
 
