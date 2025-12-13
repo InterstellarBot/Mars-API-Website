@@ -4,6 +4,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['throttle:web'])->group(function () {
     Route::get('/', function () {
-        return view('welcome');
+        return redirect("https://github.com/InterstellarBot/Mars-API-Website#readme");
     });
 });
