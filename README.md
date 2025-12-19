@@ -1,11 +1,63 @@
-## Mars API Website 
-The web side of Interstellar's Mars Rover Photo API. This is simply responsible for letting users query the database, for the actual scraper that feeds it check it out [here](https://github.com/InterstellarBot/Mars-API-Scraper).
+# Mars Image API Website 
+> [!IMPORTANT]
+> If your here for the source-code, this is only the website responsible for letting users query the database. For the actual scraper that feeds the database with the images, [find it here](https://github.com/InterstellarBot/Mars-API-Scraper).
+
+NASA's rovers on Mars capture hundreds of images every day with tens of cameras, but NASA doesn't have a portal to make these accessible from a single place. This API intends to prove that place, letting developers and researchers query and access these photos from a single database.  
+This project is maintained under the umbrella of the Interstellar Discord Bot. No, this doesn't mean I plan on commercialising it.
+
+This work is heavily based off [Chris Cerami's Mars Photo API](https://github.com/corincerami/mars-photo-api), which has now been archived. I never stood up to possibly maintain it due to the fact I'm unfamiliar with Ruby and personally use lower level languages, expecting another maintainer to hopefully come to the rescue. Since they haven't, I've rewritten his code into a Rust scraper and a PHP website to continue the API.
+
+If you need help or just want someone to talk to, come join [Interstellar's Discord Server](https://interstellarbot.xyz/discord)!
+
+## After all the images?
+If your after a full copy of every image and not just occasional queries of images, please consider hosting your own version of [the scraper](https://github.com/InterstellarBot/Mars-API-Scraper) instead. This way, your not hammering my servers and you don't have to worry about rate-limits by querying the database directly. A win-win. 
+
+The scraper is a single executable, as long as you have access to a server of some-kind (preferably Linux) you can host it quite easily as a background service.
 
 ## Using the API
-All API endpoints start with `https://mars.interstellarbot.xyz/` (e.g. `https://mars.interstellarbot.xyz/api/rovers`). No authentication is needed, and your rate-limited to 30 requests per minute.
+All API endpoints start with `https://mars.interstellarbot.xyz/` (e.g. `https://mars.interstellarbot.xyz/api/rovers`).
 
-> [!IMPORTANT]
-> If your usage of an API like this is to store a full copy of the mars photos, please use the [scraper](https://github.com/InterstellarBot/Mars-API-Scraper) instead to get it from the official source.
+### Rate-Limits & Authentication
+There is no authentication nor API key requirements, with a base rate-limit of 30 requests per second applied to each IP address. This may change if the API becomes popular enough to hammer the hell out of my servers.
+
+If you require more lenient rate-limits, contact me at `livaco@livaco.dev` or `livaco` on Discord and we can discuss potentially setting up a API Key for you to use instead depending on your use-case. I would prefer however you peek at the above option of hosting the scraper directly. 
+
+### Data Structures
+All of the types of data structures that can be present. Any property that ends with a questionmark is nullable.
+
+**Rover**
+
+| Property            | Description                                               |
+| ------------------- | --------------------------------------------------------- |
+| id                  | The identifier of the rover.                              |
+| name?               | The human friendly name of the rover.                     |
+| last_sol_processed? | The last sol that was processed for the rover.            |
+| cameras?            | An array of the RoverCamera's associated with this rover. |
+
+
+**RoverCamera**
+
+| Property        | Description                                                 |
+| --------------- | ----------------------------------------------------------- |
+| camera_id       | The identifier of the camera.                               |
+| rover_id        | The identifier of the rover the camera is associated with.  |
+| instrument_name | The "scientific" name of the camera, as NASA identifies it. |
+| name?           | The human-friendly name of the rover camera.                |
+
+**RoverImage**
+
+| Property  | Description                                                 |
+| --------- | ----------------------------------------------------------- |
+| nasa_id   | The identifier NASA gives to the image.                     |
+| rover_id  | The identifier of the rover the image is associated with.   |
+| image_url | The URL to the raw image.                                   |
+| caption?  | The caption/description that NASA describes the image with. |
+| timestamp | The unix timestamp of the time the picture was taken.       |
+| sol       | The martian sol the image was taken on.                     |
+| title     | The title NASA gives the image.                             |
+| credit?   | The credits that NASA attributes the image to.              |
+| camera    | The RoverCamera that took the image.                        |
+
 
 ### `/api/rovers`
 This endpoint gives you a list of all the available rovers, along with a list of their cameras.
@@ -27,7 +79,7 @@ This endpoint gives you a list of all the available rovers, along with a list of
       ...
     ]
   },
-  {
+{
     "id": "perseverance",
     "name": "Perseverance",
     "last_sol_processed": 1711,
@@ -111,6 +163,13 @@ The following GET parameters are available:
 - `per_page` to alter the number of images per page. Between 1-50.
 - `sol` to filter to a specific martian sol.
 - `camera` to filter to a specific rover camera. Use the camera's instrument name.
+
+
+## Source Code Locations 
+This project is split into two repositories; the website (this repo!) and the scraper that feeds the database of images itself. Both parts are fully open source, licenced under MIT;
+- [The Scraper](https://github.com/InterstellarBot/Mars-API-Scraper), responsible for gathering the photos, written in Rust.
+- [The Website](https://github.com/InterstellarBot/Mars-API-Website), where you are currently and responsible for the API and querying the database, written in PHP using the Laravel framework.
+
 
 ## Running Yourself
 This website uses the Laravel framework, so make sure you have the [dependencies Laravel needs](https://laravel.com/docs/12.x/deployment).
